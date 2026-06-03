@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Telegram-боты под ключ — разработка для бизнеса</title>
+<meta name="description" content="Разрабатываю Telegram-ботов для бизнеса: магазины, запись на услуги, приём оплаты, парсеры и автоматизация. Под ключ, с поддержкой.">
+<meta property="og:title" content="Telegram-боты под ключ для бизнеса">
+<meta property="og:description" content="Боты-магазины, запись, оплата, автоматизация. Сделаю за 2-7 дней. Примеры работ внутри.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0b0f; --bg2:#101218; --surface:#15171f; --line:#23262f;
+    --ink:#f2f4f8; --muted:#9aa0ad; --dim:#6b7280;
+    --accent:#3ddc97; --accent-ink:#06281c;
+    --r:14px; --max:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Manrope',system-ui,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  a{color:inherit;text-decoration:none}
+  .mono{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(10,11,15,.72);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:1.15rem;letter-spacing:-.02em}
+  .logo b{color:var(--accent)}
+  .nav-cta{font-size:.92rem;font-weight:600;padding:9px 18px;border:1px solid var(--line);border-radius:999px;transition:.2s}
+  .nav-cta:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* hero */
+  .hero{padding:96px 0 72px;position:relative}
+  .hero::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(600px 320px at 78% -10%,rgba(61,220,151,.10),transparent 70%);
+    pointer-events:none}
+  .hero h1{font-size:clamp(2.3rem,6vw,4rem);line-height:1.04;font-weight:800;letter-spacing:-.03em;max-width:14ch}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{margin-top:22px;font-size:clamp(1.05rem,2.2vw,1.28rem);color:var(--muted);max-width:52ch}
+  .hero-actions{margin-top:36px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:1rem;
+    padding:15px 28px;border-radius:999px;transition:.22s;cursor:pointer;border:none}
+  .btn-pri{background:var(--accent);color:var(--accent-ink)}
+  .btn-pri:hover{transform:translateY(-2px);box-shadow:0 12px 30px -8px rgba(61,220,151,.45)}
+  .btn-sec{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn-sec:hover{border-color:var(--accent)}
+  .hero-meta{margin-top:42px;display:flex;gap:32px;flex-wrap:wrap;color:var(--dim);font-size:.92rem}
+  .hero-meta b{color:var(--ink);font-weight:700;font-size:1.25rem;display:block}
+
+  /* section */
+  section{padding:80px 0}
+  .sec-head{margin-bottom:44px}
+  .sec-head h2{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em;margin-top:10px}
+  .sec-head p{color:var(--muted);margin-top:10px;max-width:56ch}
+
+  /* services grid */
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(248px,1fr))}
+  .svc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px;transition:.22s}
+  .svc:hover{border-color:#34c98a55;transform:translateY(-3px)}
+  .svc .ic{width:42px;height:42px;border-radius:10px;background:#1d2230;display:grid;place-items:center;font-size:1.3rem;margin-bottom:16px}
+  .svc h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+  .svc p{color:var(--muted);font-size:.95rem}
+  .svc .price{margin-top:16px;font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:.95rem}
+
+  /* process */
+  .steps{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));counter-reset:s}
+  .step{position:relative;padding:24px;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--bg2),var(--bg))}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:'JetBrains Mono',monospace;
+    font-size:1.6rem;color:var(--accent);opacity:.55;display:block;margin-bottom:12px}
+  .step h4{font-size:1.05rem;font-weight:700;margin-bottom:6px}
+  .step p{color:var(--muted);font-size:.92rem}
+
+  /* portfolio */
+  .work{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .work a{border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;background:var(--surface);
+    display:flex;flex-direction:column;gap:6px;transition:.22s}
+  .work a:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .work .t{font-weight:700;font-size:1.08rem}
+  .work .d{color:var(--muted);font-size:.9rem}
+  .work .go{margin-top:8px;color:var(--accent);font-size:.82rem;font-family:'JetBrains Mono',monospace}
+  .work-note{margin-top:20px;color:var(--dim);font-size:.9rem}
+
+  /* cta band */
+  .cta{margin:40px 0;background:linear-gradient(120deg,#13261e,#0e1a14);
+    border:1px solid #1f3d2e;border-radius:20px;padding:54px 40px;text-align:center}
+  .cta h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;letter-spacing:-.02em}
+  .cta p{color:var(--muted);margin:14px auto 28px;max-width:46ch}
+
+  footer{border-top:1px solid var(--line);padding:40px 0;color:var(--dim);font-size:.9rem}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media (max-width:560px){section{padding:56px 0}.hero{padding:64px 0 48px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="logo">bot<b>·</b>dev</div>
+    <a href="https://t.me/Parnishagogogo" class="nav-cta">Обсудить проект</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="mono reveal">Telegram-боты · сайты · автоматизация</span>
+    <h1 class="reveal">Боты, которые <em>работают за вас</em> 24/7</h1>
+    <p class="reveal">Разрабатываю Telegram-ботов для бизнеса под ключ: приём заказов и записей, оплата прямо в чате, уведомления, парсеры и автоматизация рутины. Быстро, с примерами и поддержкой.</p>
+    <div class="hero-actions reveal">
+      <a href="#contact" class="btn btn-pri">Заказать бота →</a>
+      <a href="#work" class="btn btn-sec">Смотреть работы</a>
+    </div>
+    <div class="hero-meta reveal">
+      <div><b>2–7 дней</b>средний срок</div>
+      <div><b>от $50</b>простой бот</div>
+      <div><b>15+</b>проектов в портфолио</div>
+      <div><b>50%</b>предоплата</div>
+    </div>
+  </div>
+</header>
+
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="mono">Что делаю</span>
+      <h2>Боты под любую задачу бизнеса</h2>
+      <p>От простого бота-визитки до магазина с оплатой и интеграциями. Подберём решение под вашу нишу и бюджет.</p>
+    </div>
+    <div class="grid">
+      <div class="svc reveal"><div class="ic">🛒</div><h3>Бот-магазин</h3><p>Каталог, корзина, оформление заказа, приём оплаты, заказы падают вам в админку.</p><div class="price">от $250</div></div>
+      <div class="svc reveal"><div class="ic">📅</div><h3>Бот записи</h3><p>Запись на услуги, выбор даты и времени, напоминания клиенту, уведомления вам.</p><div class="price">от $150</div></div>
+      <div class="svc reveal"><div class="ic">💬</div><h3>Бот заявок / FAQ</h3><p>Отвечает на частые вопросы, собирает заявки и присылает их вам в Telegram.</p><div class="price">от $50</div></div>
+      <div class="svc reveal"><div class="ic">💳</div><h3>Бот с оплатой</h3><p>Приём платежей: Telegram Stars, криптовалюта, платёжные системы. Чеки и учёт.</p><div class="price">от $300</div></div>
+      <div class="svc reveal"><div class="ic">🔎</div><h3>Парсер / мониторинг</h3><p>Сбор данных с сайтов, каналов и чатов, фильтры, выгрузка в Excel / Google Sheets.</p><div class="price">от $200</div></div>
+      <div class="svc reveal"><div class="ic">⚙️</div><h3>Интеграции</h3><p>Подключение к CRM, Google Sheets, внешним API, базам данных. Автоматизация процессов.</p><div class="price">от $300</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="process" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="mono">Как работаем</span>
+      <h2>Прозрачный процесс без сюрпризов</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><h4>Обсуждаем задачу</h4><p>Вы рассказываете, что нужно. Я задаю вопросы и фиксирую функции письменно.</p></div>
+      <div class="step reveal"><h4>Оценка и предоплата</h4><p>Называю точную цену и срок. Старт после предоплаты 50%.</p></div>
+      <div class="step reveal"><h4>Разработка</h4><p>Делаю бота, показываю промежуточный результат, вношу правки.</p></div>
+      <div class="step reveal"><h4>Сдача и поддержка</h4><p>Запускаю, передаю доступы, остаток оплаты. 7 дней поддержки в подарок.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="mono">Портфолио</span>
+      <h2>Качество, которое видно</h2>
+      <p>Боты часто без публичного интерфейса, поэтому вот мои сайты — по ним видно уровень проработки. Тот же подход применяю к ботам.</p>
+    </div>
+    <div class="work">
+      <a href="https://portfolio-pro-eight-gamma.vercel.app/" target="_blank" rel="noopener"><span class="t">Portfolio Pro</span><span class="d">Bold-editorial сайт-визитка, Next.js + GSAP</span><span class="go">открыть ↗</span></a>
+      <a href="https://hohotyn156782-bit.github.io/eclat/" target="_blank" rel="noopener"><span class="t">Éclat</span><span class="d">Люксовая парфюмерия, премиум-анимация</span><span class="go">открыть ↗</span></a>
+      <a href="https://hohotyn156782-bit.github.io/voyage-elite/" target="_blank" rel="noopener"><span class="t">Voyage Elite</span><span class="d">Тур-агентство, насыщенный интерактив</span><span class="go">открыть ↗</span></a>
+      <a href="https://hohotyn156782-bit.github.io/venom-ink/" target="_blank" rel="noopener"><span class="t">Venom Ink</span><span class="d">Тату-студия, дерзкий дизайн</span><span class="go">открыть ↗</span></a>
+      <a href="https://hohotyn156782-bit.github.io/ivory-dental/" target="_blank" rel="noopener"><span class="t">Ivory Dental</span><span class="d">Стоматология, чистый медицинский UI</span><span class="go">открыть ↗</span></a>
+      <a href="https://hohotyn156782-bit.github.io/sonoria/" target="_blank" rel="noopener"><span class="t">Sonoria</span><span class="d">Музыкальная академия, звук + движение</span><span class="go">открыть ↗</span></a>
+    </div>
+    <p class="work-note">Примеры ботов покажу в личке под вашу задачу — напишите, и пришлю подходящие кейсы.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta reveal" id="contact">
+      <h2>Расскажите, какой бот вам нужен</h2>
+      <p>Отвечу в течение пары часов, покажу примеры и назову точную цену. Без обязательств.</p>
+      <a href="https://t.me/Parnishagogogo" class="btn btn-pri" id="tg-btn">Написать в Telegram →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© 2026 · Разработка Telegram-ботов и сайтов</div>
+    <div>Оплата: крипта · Telegram Stars · карта · Предоплата 50%</div>
+  </div>
+</footer>
+
+<script>
+  // reveal on scroll
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.14});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el)});
+</script>
+</body>
+</html>
