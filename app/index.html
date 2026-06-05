@@ -7,15 +7,17 @@
 <title>Pavel · Боты и сайты</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root{ --accent:#3ddc97; --accent2:#2ec4b6; --bg:#0a0d13; --card:#141a24; --card2:#1b2330;
+  :root{ --accent:#3ddc97; --bg:#0a0d13; --card:#141a24; --card2:#1b2330;
          --txt:#eef5f0; --muted:#8b97a7; --line:#232c3a; }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;background:var(--bg);
        color:var(--txt);padding:16px 14px 40px;line-height:1.5;font-size:15px}
-  .hero{padding:14px 0 18px}
+  .hero{padding:14px 0 8px}
   .hero h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
   .hero h1 b{color:var(--accent)}
   .hero p{color:var(--muted);margin-top:8px;font-size:14px}
+  .trust{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .trust span{background:rgba(61,220,151,.12);color:var(--accent);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:700}
   .sec{margin-top:22px}
   .sec-t{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;font-weight:700}
   .grid{display:grid;gap:9px}
@@ -28,6 +30,18 @@
   .price h4{color:var(--accent);font-size:14px;margin-bottom:6px}
   .price .row{display:flex;justify-content:space-between;font-size:13.5px;padding:3px 0;color:var(--txt)}
   .price .row span:last-child{color:var(--muted);white-space:nowrap}
+  .guard{background:linear-gradient(180deg,rgba(61,220,151,.10),rgba(61,220,151,.03));
+         border:1px solid rgba(61,220,151,.25);border-radius:14px;padding:14px}
+  .guard h4{color:var(--accent);font-size:15px;margin-bottom:8px}
+  .guard ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .guard li{font-size:13.5px;padding-left:22px;position:relative}
+  .guard li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin-bottom:8px}
+  details summary{cursor:pointer;font-size:14px;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";float:right;color:var(--accent);font-weight:800}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted);font-size:13px;margin-top:8px}
   .field{margin-bottom:12px}
   .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -36,17 +50,16 @@
   input,textarea{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;
         padding:12px;color:var(--txt);font-size:15px;font-family:inherit;resize:vertical}
   input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  input.bad{border-color:#e0556b}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .hint.bad{color:#e0556b}
   .send{display:none;width:100%;margin-top:6px;background:var(--accent);color:#072014;border:none;
         border-radius:14px;padding:15px;font-size:16px;font-weight:800;cursor:pointer}
-  .send:active{transform:scale(.99)}
   .send.vis{display:block}
+  .send:active{transform:scale(.99)}
   .note{color:var(--muted);font-size:12px;text-align:center;margin-top:14px}
-  .banner{background:rgba(61,220,151,.12);color:var(--accent);border:1px solid rgba(61,220,151,.3);
-          border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:14px;display:none}
-  .banner.vis{display:block}
   .badge{display:inline-block;background:rgba(61,220,151,.12);color:var(--accent);
          border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;margin-top:10px}
-  /* overlay-фолбэк */
   .ovl{position:fixed;inset:0;background:rgba(5,7,11,.92);backdrop-filter:blur(4px);z-index:99;
        display:none;align-items:center;justify-content:center;padding:22px}
   .ovl.vis{display:flex}
@@ -55,17 +68,18 @@
   .ovl-card p{color:var(--muted);font-size:14px;margin-bottom:14px}
   .ovl-card .draft{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;
         font-size:13px;color:var(--txt);white-space:pre-wrap;margin-bottom:14px;max-height:160px;overflow:auto}
-  .ovl-card button{width:100%;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:700;
-        cursor:pointer;margin-bottom:9px}
+  .ovl-card button{width:100%;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:9px}
   .b-pri{background:var(--accent);color:#072014}
-  .b-sec{background:var(--card2);color:var(--txt);border:1px solid var(--line)!important}
+  .b-sec{background:var(--card2);color:var(--txt);border:1px solid var(--line)}
 </style>
 </head>
 <body>
   <div class="hero">
     <h1>Telegram-<b>боты</b>, сайты и <b>автоматизация</b></h1>
     <p>Делаю под ключ: магазины, запись, оплата, AI-ассистенты, парсеры и премиум-сайты на Next.js.</p>
-    <span class="badge">⚡ 15+ проектов · живые демо ниже</span>
+    <div class="trust">
+      <span>🛡 Безопасная сделка</span><span>↩️ возврат предоплаты</span><span>⚡ 15+ проектов</span>
+    </div>
   </div>
 
   <div class="sec">
@@ -95,8 +109,29 @@
   </div>
 
   <div class="sec">
+    <div class="sec-t">🛡 Почему со мной безопасно</div>
+    <div class="guard">
+      <h4>Ты ничем не рискуешь</h4>
+      <ul>
+        <li>Работаю по <b>Безопасной сделке</b> — деньги замораживаются и приходят мне только после приёмки</li>
+        <li>Предоплата 50%, не понравится прототип — <b>верну предоплату</b></li>
+        <li>Правки по ТЗ — бесплатно до сдачи + 7 дней поддержки</li>
+        <li>Перед стартом фиксируем ТЗ, чтобы результат совпал с ожиданием</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">❓ Частые вопросы</div>
+    <details><summary>Как оплатить?</summary><p>Крипта, Telegram Stars, карты РФ, перевод. Удобно — через Безопасную сделку (деньги у площадки до приёмки).</p></details>
+    <details><summary>А вдруг пропадёшь с деньгами?</summary><p>Поэтому и Безопасная сделка: деньги не у меня, а у площадки. Не сдам работу — деньги вернутся тебе.</p></details>
+    <details><summary>Работаешь по договору / ТЗ?</summary><p>Да. Перед стартом фиксируем ТЗ: что делает, сроки, этапы. Защищает обоих.</p></details>
+    <details><summary>Сроки?</summary><p>Простой бот — 2-5 дней, магазин/запись — до недели, AI-бот/сайт — 1-3 недели. Точно скажу под задачу.</p></details>
+  </div>
+
+  <div class="sec">
     <div class="sec-t">📝 Обсудить проект</div>
-    <div class="banner" id="restored">↩️ Черновик восстановлен — нажми «Отправить заявку».</div>
+    <div class="banner badge" id="restored" style="display:none">↩️ Черновик восстановлен — нажми «Отправить».</div>
     <div class="field">
       <label>Что нужно?</label>
       <div class="chips" id="kinds">
@@ -107,28 +142,44 @@
       </div>
     </div>
     <div class="field"><label>Опиши задачу</label><textarea id="task" rows="3" placeholder="Например: бот записи в барбершоп с напоминаниями"></textarea></div>
-    <div class="field"><label>Бюджет (если есть)</label><input id="budget" placeholder="например 20 000₽ или «не знаю»"></div>
-    <div class="field"><label>Имя и контакт</label><input id="contact" placeholder="@username или телефон"></div>
-    <!-- запасная HTML-кнопка (на случай если нативная MainButton недоступна) -->
+    <div class="field">
+      <label>Бюджет</label>
+      <div class="chips" id="buds">
+        <div class="chip" data-v="до 10 000₽">до 10к</div>
+        <div class="chip" data-v="10–30 000₽">10–30к</div>
+        <div class="chip" data-v="30–60 000₽">30–60к</div>
+        <div class="chip" data-v="60 000₽+">60к+</div>
+        <div class="chip" data-v="нужна консультация">консультация</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Когда нужно?</label>
+      <div class="chips" id="urg">
+        <div class="chip" data-v="🔥 срочно">🔥 срочно</div>
+        <div class="chip" data-v="1–2 недели">1–2 недели</div>
+        <div class="chip" data-v="не горит">не горит</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Имя и контакт</label>
+      <input id="contact" placeholder="@username или телефон">
+      <div class="hint" id="cHint">Чтобы я смог ответить — @username или номер.</div>
+    </div>
     <button class="send" id="sendBtn">📨 Отправить заявку</button>
   </div>
 
   <div class="note">Заявка придёт мне в Telegram — отвечу лично. Если что — пиши @BaronPavel.</div>
 
-  <!-- overlay: когда sendData не доступен (запуск из меню/inline) -->
   <div class="ovl" id="ovl">
     <div class="ovl-card">
-      <h3>📲 Ещё один шаг</h3>
-      <p>Telegram отправляет заявку из приложения, только когда оно открыто кнопкой
-         <b>«📝 Оставить заявку»</b> внизу экрана. Твой черновик сохранён 👇</p>
+      <h3>📲 Не отправилось автоматически</h3>
+      <p>Похоже, нет связи с сервером. Твоя заявка скопирована — напиши мне напрямую, отвечу лично 👇</p>
       <div class="draft" id="draftText"></div>
-      <button class="b-pri" id="ovlReopen">📝 Открыть правильную кнопку</button>
-      <button class="b-sec" id="ovlWrite">✍️ Просто написать @BaronPavel</button>
+      <button class="b-pri" id="ovlWrite">✍️ Написать @BaronPavel</button>
       <button class="b-sec" id="ovlClose">Закрыть</button>
     </div>
   </div>
 
-  <!-- overlay: успешная отправка -->
   <div class="ovl" id="okOvl">
     <div class="ovl-card" style="text-align:center">
       <div style="font-size:54px;margin-bottom:6px">✅</div>
@@ -138,17 +189,15 @@
   </div>
 
 <script>
-  // graceful: работает и внутри Telegram, и в обычном браузере
+  const BACKEND = "https://vizitka-api.vercel.app";
   const inTG = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData !== undefined);
   const tg = inTG ? window.Telegram.WebApp
     : { ready(){}, expand(){}, close(){}, openLink(u){window.open(u,'_blank')},
-        openTelegramLink(u){window.open(u,'_blank')}, sendData(){ throw new Error('no-tg'); },
-        setHeaderColor(){}, setBackgroundColor(){}, HapticFeedback:null,
-        MainButton:{ setText(){}, show(){}, hide(){}, onClick(){}, color:'', textColor:'',
-                     setParams(){}, isVisible:false } };
+        openTelegramLink(u){window.open(u,'_blank')}, setHeaderColor(){}, setBackgroundColor(){}, HapticFeedback:null, initData:"" };
   tg.ready(); tg.expand();
   try { tg.setHeaderColor('#0a0d13'); tg.setBackgroundColor('#0a0d13'); } catch(e){}
 
+  const $ = id => document.getElementById(id);
   const DEMOS = [
     ["🧮 Квиз-калькулятор","pg_quiz_demo_bot"], ["🛒 Магазин + оплата","pg_shop_demo_bot"],
     ["📅 Запись на услугу","pg_booking_demo_bot"], ["💬 FAQ + заявки","pg_faq_demo_bot"],
@@ -161,59 +210,55 @@
     ["🖤 Venom Ink — тату","https://hohotyn156782-bit.github.io/venom-ink/"],
     ["🦷 Ivory Dental","https://hohotyn156782-bit.github.io/ivory-dental/"],
   ];
-  const $ = id => document.getElementById(id);
-  const dEl = $('demos');
   DEMOS.forEach(([t,u])=>{ const d=document.createElement('div'); d.className='tile';
     d.innerHTML='<span class="em">▶️</span><span>'+t+'</span>';
-    d.onclick=()=>tg.openTelegramLink('https://t.me/'+u); dEl.appendChild(d); });
-  const sEl = $('sites');
+    d.onclick=()=>tg.openTelegramLink('https://t.me/'+u); $('demos').appendChild(d); });
   SITES.forEach(([t,u])=>{ const d=document.createElement('div'); d.className='tile';
     d.innerHTML='<span class="em">🔗</span><span>'+t+'</span>';
-    d.onclick=()=>tg.openLink(u); sEl.appendChild(d); });
+    d.onclick=()=>tg.openLink(u); $('sites').appendChild(d); });
 
-  let kind='';
-  document.querySelectorAll('#kinds .chip').forEach(c=>{
-    c.onclick=()=>{ document.querySelectorAll('#kinds .chip').forEach(x=>x.classList.remove('on'));
-      c.classList.add('on'); kind=c.dataset.v; updateBtn(); };
-  });
-  ['task','budget','contact'].forEach(id=>$(id).addEventListener('input',updateBtn));
-
-  function ready(){ return kind && $('task').value.trim().length>3 && $('contact').value.trim().length>1; }
-  function updateBtn(){
-    const on = ready();
-    // нативная кнопка Telegram
-    try{
-      if(on){ tg.MainButton.setText('📨 Отправить заявку'); tg.MainButton.color='#3ddc97';
-        tg.MainButton.textColor='#072014'; tg.MainButton.show(); }
-      else tg.MainButton.hide();
-    }catch(e){}
-    // запасная HTML-кнопка
-    $('sendBtn').classList.toggle('vis', on);
+  let kind='', budget='', urgency='';
+  function chipGroup(boxId, set){
+    document.querySelectorAll('#'+boxId+' .chip').forEach(c=>{
+      c.onclick=()=>{ document.querySelectorAll('#'+boxId+' .chip').forEach(x=>x.classList.remove('on'));
+        c.classList.add('on'); set(c.dataset.v); updateBtn(); };
+    });
   }
+  chipGroup('kinds', v=>kind=v);
+  chipGroup('buds',  v=>budget=v);
+  chipGroup('urg',   v=>urgency=v);
 
-  function payload(){ return { kind, task:$('task').value.trim(),
-    budget:$('budget').value.trim()||'не указан', contact:$('contact').value.trim() }; }
+  const CONTACT_RE = /(@[A-Za-z0-9_]{3,})|(\+?\d[\d\s\-()]{6,})/;
+  function contactOk(){ return CONTACT_RE.test($('contact').value.trim()); }
+  $('contact').addEventListener('input', ()=>{
+    const v=$('contact').value.trim();
+    const ok = !v || contactOk();
+    $('contact').classList.toggle('bad', !ok && v.length>0);
+    $('cHint').classList.toggle('bad', !ok && v.length>0);
+    $('cHint').textContent = (!ok && v.length>0) ? 'Нужен @username или номер телефона.' : 'Чтобы я смог ответить — @username или номер.';
+    updateBtn();
+  });
+  $('task').addEventListener('input', updateBtn);
+
+  function ready(){ return kind && budget && $('task').value.trim().length>3 && contactOk(); }
+  function updateBtn(){ $('sendBtn').classList.toggle('vis', ready()); }
+
+  function payload(){
+    let b = budget || 'не указан';
+    if (urgency) b += ' · ' + urgency;
+    return { kind, task:$('task').value.trim(), budget:b, contact:$('contact').value.trim() };
+  }
   function draftStr(p){ return `Тип: ${p.kind}\nЗадача: ${p.task}\nБюджет: ${p.budget}\nКонтакт: ${p.contact}`; }
+  function setSending(on){ const b=$('sendBtn'); if(on){ b.dataset.t=b.textContent; b.textContent='Отправляю…'; b.disabled=true; } else { b.disabled=false; if(b.dataset.t) b.textContent=b.dataset.t; } }
 
-  const BACKEND = "https://vizitka-api.vercel.app";   // эндпоинт заявок (Vercel) — работает из любой кнопки
-
-  let busy=false, closed=false;
-  window.addEventListener('pagehide',()=>{closed=true;});
-  window.addEventListener('beforeunload',()=>{closed=true;});
-
-  function setSending(on){ const b=$('sendBtn');
-    if(on){ b.dataset.t=b.textContent; b.textContent='Отправляю…'; b.disabled=true; }
-    else { b.disabled=false; if(b.dataset.t) b.textContent=b.dataset.t; } }
-
+  let busy=false;
   async function submit(){
     if(!ready()||busy) return; busy=true;
     const p = payload();
     try{ localStorage.setItem('lead_draft', JSON.stringify({p, t:Date.now()})); }catch(e){}
     tg.HapticFeedback && tg.HapticFeedback.notificationOccurred && tg.HapticFeedback.notificationOccurred('success');
-    // вне Telegram (нет подписанного initData) → сразу фолбэк
-    if(!inTG || !tg.initData){ busy=false; showFallback(p); return; }
+    if(!inTG || !tg.initData){ busy=false; showFallback(p); return; }   // вне Telegram
     setSending(true);
-    // 1) ОСНОВНОЙ путь — бэкенд: проверяет подпись Telegram, шлёт заявку. Работает из ЛЮБОЙ кнопки.
     try{
       const r = await fetch(BACKEND + "/api/lead", { method:"POST",
         headers:{ "Content-Type":"application/json" },
@@ -221,42 +266,31 @@
       const j = await r.json().catch(()=>null);
       if(j && j.ok){ try{localStorage.removeItem('lead_draft');}catch(e){}
         showSuccess(); setTimeout(()=>{ try{tg.close();}catch(e){} }, 1900); return; }
-    }catch(e){ /* бэкенд недоступен — пробуем запасные пути */ }
-    // 2) ЗАПАСНОЙ — sendData (сработает, если аппа открыт из reply-кнопки)
-    let threw=false;
-    try{ tg.sendData(JSON.stringify(p)); }catch(e){ threw=true; }
-    if(threw){ busy=false; setSending(false); showFallback(p); return; }
-    setTimeout(()=>{ if(!closed){ busy=false; setSending(false); showFallback(p); } }, 1100);
+    }catch(e){ /* сеть/бэкенд — фолбэк */ }
+    busy=false; setSending(false); showFallback(p);
   }
   $('sendBtn').onclick = submit;
-  try{ tg.MainButton.onClick(submit); }catch(e){}
 
-  // overlay-фолбэк
-  function showFallback(p){
-    $('draftText').textContent = draftStr(p);
-    $('ovl').classList.add('vis');
-  }
+  function showFallback(p){ $('draftText').textContent = draftStr(p); $('ovl').classList.add('vis'); }
   function showSuccess(){ $('okOvl').classList.add('vis'); }
-  $('ovlReopen').onclick = ()=> tg.close();   // закрыть → пользователь видит reply-кнопку «Оставить заявку»
   $('ovlWrite').onclick = ()=>{
-    const p = payload();
-    try{ navigator.clipboard && navigator.clipboard.writeText(draftStr(p)); }catch(e){}
+    try{ navigator.clipboard && navigator.clipboard.writeText(draftStr(payload())); }catch(e){}
     tg.openTelegramLink('https://t.me/BaronPavel');
   };
   $('ovlClose').onclick = ()=> $('ovl').classList.remove('vis');
 
-  // восстановление черновика (после reopen из правильной кнопки данные не теряются)
+  // восстановление черновика (после переоткрытия данные не теряются)
   (function restore(){
     try{
       const raw = localStorage.getItem('lead_draft'); if(!raw) return;
-      const {p, t} = JSON.parse(raw);
-      localStorage.removeItem('lead_draft');             // одноразовое восстановление
-      if(!p || Date.now()-t > 15*60*1000) return;        // не старше 15 мин
-      $('task').value=p.task||''; $('budget').value=(p.budget==='не указан'?'':p.budget)||''; $('contact').value=p.contact||'';
-      const chip = document.querySelector('#kinds .chip[data-v="'+(p.kind||'')+'"]');
-      if(chip){ chip.classList.add('on'); kind=p.kind; }
-      $('restored').classList.add('vis');
-      updateBtn();
+      const {p, t} = JSON.parse(raw); localStorage.removeItem('lead_draft');
+      if(!p || Date.now()-t > 15*60*1000) return;
+      $('task').value=p.task||''; $('contact').value=p.contact||'';
+      const pick=(box,val)=>{ const el=document.querySelector('#'+box+' .chip[data-v="'+(val||'')+'"]'); if(el){el.classList.add('on');return val;} return ''; };
+      kind=pick('kinds',p.kind);
+      // бюджет мог быть склеен с срочностью — берём первую часть
+      const bparts=(p.budget||'').split(' · '); budget=pick('buds',bparts[0]); if(bparts[1]) urgency=pick('urg',bparts[1]);
+      $('restored').style.display='inline-block'; updateBtn();
       window.scrollTo(0, document.body.scrollHeight);
     }catch(e){}
   })();
