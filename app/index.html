@@ -95,7 +95,14 @@
   <div class="note">Нажми кнопку внизу — заявка придёт мне в Telegram, отвечу лично.</div>
 
 <script>
-  const tg = window.Telegram.WebApp;
+  // graceful: работает и внутри Telegram, и если открыть ссылку в обычном браузере
+  const tg = (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData !== undefined)
+    ? window.Telegram.WebApp
+    : { ready(){}, expand(){}, openLink(u){window.open(u,'_blank')},
+        openTelegramLink(u){window.open(u,'_blank')}, sendData(d){alert('Заявка готова. Откройте бота в Telegram, чтобы отправить.')},
+        setHeaderColor(){}, setBackgroundColor(){}, HapticFeedback:null,
+        MainButton:{setText(){}, show(){this._v=1}, hide(){this._v=0}, onClick(f){this._f=f},
+                    color:'', textColor:''} };
   tg.ready(); tg.expand();
   try { tg.setHeaderColor('#0a0d13'); tg.setBackgroundColor('#0a0d13'); } catch(e){}
 
