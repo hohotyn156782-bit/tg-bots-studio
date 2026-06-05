@@ -128,6 +128,15 @@
     </div>
   </div>
 
+  <!-- overlay: успешная отправка -->
+  <div class="ovl" id="okOvl">
+    <div class="ovl-card" style="text-align:center">
+      <div style="font-size:54px;margin-bottom:6px">✅</div>
+      <h3>Заявка отправлена!</h3>
+      <p style="margin-bottom:0">Спасибо — свяжусь с тобой в ближайшее время. Окно сейчас закроется.</p>
+    </div>
+  </div>
+
 <script>
   // graceful: работает и внутри Telegram, и в обычном браузере
   const inTG = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData !== undefined);
@@ -186,21 +195,38 @@
     budget:$('budget').value.trim()||'не указан', contact:$('contact').value.trim() }; }
   function draftStr(p){ return `Тип: ${p.kind}\nЗадача: ${p.task}\nБюджет: ${p.budget}\nКонтакт: ${p.contact}`; }
 
+  const BACKEND = "https://vizitka-api.vercel.app";   // эндпоинт заявок (Vercel) — работает из любой кнопки
+
   let busy=false, closed=false;
   window.addEventListener('pagehide',()=>{closed=true;});
   window.addEventListener('beforeunload',()=>{closed=true;});
 
-  function submit(){
+  function setSending(on){ const b=$('sendBtn');
+    if(on){ b.dataset.t=b.textContent; b.textContent='Отправляю…'; b.disabled=true; }
+    else { b.disabled=false; if(b.dataset.t) b.textContent=b.dataset.t; } }
+
+  async function submit(){
     if(!ready()||busy) return; busy=true;
     const p = payload();
     try{ localStorage.setItem('lead_draft', JSON.stringify({p, t:Date.now()})); }catch(e){}
     tg.HapticFeedback && tg.HapticFeedback.notificationOccurred && tg.HapticFeedback.notificationOccurred('success');
+    // вне Telegram (нет подписанного initData) → сразу фолбэк
+    if(!inTG || !tg.initData){ busy=false; showFallback(p); return; }
+    setSending(true);
+    // 1) ОСНОВНОЙ путь — бэкенд: проверяет подпись Telegram, шлёт заявку. Работает из ЛЮБОЙ кнопки.
+    try{
+      const r = await fetch(BACKEND + "/api/lead", { method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ initData: tg.initData, payload: p }) });
+      const j = await r.json().catch(()=>null);
+      if(j && j.ok){ try{localStorage.removeItem('lead_draft');}catch(e){}
+        showSuccess(); setTimeout(()=>{ try{tg.close();}catch(e){} }, 1900); return; }
+    }catch(e){ /* бэкенд недоступен — пробуем запасные пути */ }
+    // 2) ЗАПАСНОЙ — sendData (сработает, если аппа открыт из reply-кнопки)
     let threw=false;
-    try{ tg.sendData(JSON.stringify(p)); }   // из reply-кнопки → доставит и закроет аппа
-    catch(e){ threw=true; }
-    if(threw){ busy=false; showFallback(p); return; }
-    // если через 1.1с аппа всё ещё открыт — значит запуск НЕ из reply-кнопки, sendData не дошёл
-    setTimeout(()=>{ if(!closed){ busy=false; showFallback(p); } }, 1100);
+    try{ tg.sendData(JSON.stringify(p)); }catch(e){ threw=true; }
+    if(threw){ busy=false; setSending(false); showFallback(p); return; }
+    setTimeout(()=>{ if(!closed){ busy=false; setSending(false); showFallback(p); } }, 1100);
   }
   $('sendBtn').onclick = submit;
   try{ tg.MainButton.onClick(submit); }catch(e){}
@@ -210,6 +236,7 @@
     $('draftText').textContent = draftStr(p);
     $('ovl').classList.add('vis');
   }
+  function showSuccess(){ $('okOvl').classList.add('vis'); }
   $('ovlReopen').onclick = ()=> tg.close();   // закрыть → пользователь видит reply-кнопку «Оставить заявку»
   $('ovlWrite').onclick = ()=>{
     const p = payload();
