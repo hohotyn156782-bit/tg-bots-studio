@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="dark">
+<title>Pavel · Боты и сайты</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{ --accent:#3ddc97; --accent2:#2ec4b6; --bg:#0a0d13; --card:#141a24; --card2:#1b2330;
+         --txt:#eef5f0; --muted:#8b97a7; --line:#232c3a; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;background:var(--bg);
+       color:var(--txt);padding:16px 14px 40px;line-height:1.5;font-size:15px}
+  .hero{padding:14px 0 18px}
+  .hero h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
+  .hero h1 b{color:var(--accent)}
+  .hero p{color:var(--muted);margin-top:8px;font-size:14px}
+  .sec{margin-top:22px}
+  .sec-t{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;font-weight:700}
+  .grid{display:grid;gap:9px}
+  .g2{grid-template-columns:1fr 1fr}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;
+        display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;font-size:14px;font-weight:600}
+  .tile:active{transform:scale(.98);border-color:var(--accent)}
+  .tile .em{font-size:19px}
+  .tile small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:2px}
+  .price{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:9px}
+  .price h4{color:var(--accent);font-size:14px;margin-bottom:6px}
+  .price .row{display:flex;justify-content:space-between;font-size:13.5px;padding:3px 0;color:var(--txt)}
+  .price .row span:last-child{color:var(--muted);white-space:nowrap}
+  /* форма */
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:13px;cursor:pointer}
+  .chip.on{background:var(--accent);color:#072014;border-color:var(--accent);font-weight:700}
+  input,textarea{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;
+        padding:12px;color:var(--txt);font-size:15px;font-family:inherit;resize:vertical}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  .note{color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+  .badge{display:inline-block;background:rgba(61,220,151,.12);color:var(--accent);
+         border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;margin-top:10px}
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Telegram-<b>боты</b>, сайты и <b>автоматизация</b></h1>
+    <p>Делаю под ключ: магазины, запись, оплата, AI-ассистенты, парсеры и премиум-сайты на Next.js.</p>
+    <span class="badge">⚡ 15+ проектов · живые демо ниже</span>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">🤖 Живые демо-боты — попробуй</div>
+    <div class="grid g2" id="demos"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">🌐 Реальные работы</div>
+    <div class="grid" id="sites"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">💰 Ориентир по ценам</div>
+    <div class="price">
+      <h4>🤖 Боты</h4>
+      <div class="row"><span>Простой (FAQ, заявки)</span><span>от 5 000₽</span></div>
+      <div class="row"><span>Запись / магазин с оплатой</span><span>от 12 000₽</span></div>
+      <div class="row"><span>AI-бот / RAG-ассистент</span><span>от 25 000₽</span></div>
+    </div>
+    <div class="price">
+      <h4>🌐 Сайты</h4>
+      <div class="row"><span>Лендинг</span><span>от 15 000₽</span></div>
+      <div class="row"><span>Многостраничный</span><span>от 30 000₽</span></div>
+      <div class="row"><span>Премиум Next.js + анимации</span><span>от 50 000₽</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-t">📝 Обсудить проект</div>
+    <div class="field">
+      <label>Что нужно?</label>
+      <div class="chips" id="kinds">
+        <div class="chip" data-v="бот">🤖 Бот</div>
+        <div class="chip" data-v="сайт">🌐 Сайт/лендинг</div>
+        <div class="chip" data-v="автоматизация">⚙️ Автоматизация</div>
+        <div class="chip" data-v="консультация">🤔 Не уверен</div>
+      </div>
+    </div>
+    <div class="field"><label>Опиши задачу</label><textarea id="task" rows="3" placeholder="Например: бот записи в барбершоп с напоминаниями"></textarea></div>
+    <div class="field"><label>Бюджет (если есть)</label><input id="budget" placeholder="например 20 000₽ или «не знаю»"></div>
+    <div class="field"><label>Имя и контакт</label><input id="contact" placeholder="@username или телефон"></div>
+  </div>
+
+  <div class="note">Нажми кнопку внизу — заявка придёт мне в Telegram, отвечу лично.</div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.ready(); tg.expand();
+  try { tg.setHeaderColor('#0a0d13'); tg.setBackgroundColor('#0a0d13'); } catch(e){}
+
+  const DEMOS = [
+    ["🧮 Квиз-калькулятор","pg_quiz_demo_bot"],
+    ["🛒 Магазин + оплата","pg_shop_demo_bot"],
+    ["📅 Запись на услугу","pg_booking_demo_bot"],
+    ["💬 FAQ + заявки","pg_faq_demo_bot"],
+    ["📢 Рассылки","pg_broadcast_demo_bot"],
+    ["💎 Арбитраж подарков","Tg_nft_buy_bot"],
+  ];
+  const SITES = [
+    ["⭐ Портфолио (все проекты)","https://portfolio-pro-eight-gamma.vercel.app/"],
+    ["💧 Éclat — парфюмерия","https://hohotyn156782-bit.github.io/eclat/"],
+    ["✈️ Voyage Elite — туры","https://hohotyn156782-bit.github.io/voyage-elite/"],
+    ["🖤 Venom Ink — тату","https://hohotyn156782-bit.github.io/venom-ink/"],
+    ["🦷 Ivory Dental","https://hohotyn156782-bit.github.io/ivory-dental/"],
+  ];
+
+  const dEl = document.getElementById('demos');
+  DEMOS.forEach(([t,u])=>{
+    const d=document.createElement('div'); d.className='tile';
+    d.innerHTML=`<span class="em">▶️</span><span>${t}</span>`;
+    d.onclick=()=>tg.openTelegramLink('https://t.me/'+u);
+    dEl.appendChild(d);
+  });
+  const sEl = document.getElementById('sites');
+  SITES.forEach(([t,u])=>{
+    const d=document.createElement('div'); d.className='tile';
+    d.innerHTML=`<span class="em">🔗</span><span>${t}</span>`;
+    d.onclick=()=>tg.openLink(u);
+    sEl.appendChild(d);
+  });
+
+  let kind='';
+  document.querySelectorAll('#kinds .chip').forEach(c=>{
+    c.onclick=()=>{ document.querySelectorAll('#kinds .chip').forEach(x=>x.classList.remove('on'));
+      c.classList.add('on'); kind=c.dataset.v; updateBtn(); };
+  });
+  ['task','budget','contact'].forEach(id=>document.getElementById(id).addEventListener('input',updateBtn));
+
+  function ready(){ return kind && document.getElementById('task').value.trim().length>3
+      && document.getElementById('contact').value.trim().length>1; }
+  function updateBtn(){
+    if(ready()){ tg.MainButton.setText('📨 Отправить заявку'); tg.MainButton.color='#3ddc97';
+      tg.MainButton.textColor='#072014'; tg.MainButton.show(); }
+    else tg.MainButton.hide();
+  }
+  tg.MainButton.onClick(()=>{
+    if(!ready()) return;
+    const payload={ kind, task:document.getElementById('task').value.trim(),
+      budget:document.getElementById('budget').value.trim()||'не указан',
+      contact:document.getElementById('contact').value.trim() };
+    tg.HapticFeedback && tg.HapticFeedback.notificationOccurred('success');
+    tg.sendData(JSON.stringify(payload));   // вернётся в бот как web_app_data, окно закроется
+  });
+</script>
+</body>
+</html>
