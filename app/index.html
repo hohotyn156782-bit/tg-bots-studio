@@ -492,8 +492,10 @@
 
   // ---------- reveal-анимации ----------
   try{
-    const io=new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:.12});
+    const io=new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:.06, rootMargin:'0px 0px 12% 0px'});
     document.querySelectorAll('.rv, .card, .tile, details, .price').forEach((el,i)=>{ el.classList.add('rv'); el.style.transitionDelay=(Math.min(i,6)*30)+'ms'; io.observe(el); });
+    // страховка: через 0.9с показать всё, что ещё не появилось (надёжность важнее анимации)
+    setTimeout(()=>document.querySelectorAll('.rv:not(.in)').forEach(el=>el.classList.add('in')), 900);
   }catch(e){ document.querySelectorAll('.rv').forEach(el=>el.classList.add('in')); }
 
   // ---------- восстановление черновика ----------
